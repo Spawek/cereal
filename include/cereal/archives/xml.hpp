@@ -121,7 +121,15 @@ namespace cereal
             itsPrecision( precision ),
             itsIndent( indent ),
             itsOutputType( outputType ),
-            itsRootName( rootName ) { }
+            itsRootName( rootName ),
+            itsSizeAttributes(true)
+          { }
+
+          Options& NoSizeAttributes()
+          {
+              itsSizeAttributes = false; 
+              return *this;
+          }
 
         private:
           friend class XMLOutputArchive;
@@ -129,6 +137,7 @@ namespace cereal
           bool itsIndent;
           bool itsOutputType;
           const char * itsRootName;
+          bool itsSizeAttributes;
       };
 
       //! Construct, outputting to the provided stream upon destruction
@@ -140,7 +149,8 @@ namespace cereal
         OutputArchive<XMLOutputArchive>(this),
         itsStream(stream),
         itsOutputType( options.itsOutputType ),
-        itsIndent( options.itsIndent )
+        itsIndent( options.itsIndent ),
+        itsSizeAttributes(options.itsSizeAttributes)
       {
         // rapidxml will delete all allocations when xml_document is cleared
         auto node = itsXML.allocate_node( rapidxml::node_declaration );
@@ -295,6 +305,8 @@ namespace cereal
         itsNodes.top().node->append_attribute( itsXML.allocate_attribute( namePtr, valuePtr ) );
       }
 
+      bool hasSizeAttributes() const { return itsSizeAttributes; }
+
     protected:
       //! A struct that contains metadata about a node
       struct NodeInfo
@@ -342,6 +354,7 @@ namespace cereal
       std::ostringstream itsOS;        //!< Used to format strings internally
       bool itsOutputType;              //!< Controls whether type information is printed
       bool itsIndent;                  //!< Controls whether indenting is used
+      bool itsSizeAttributes;          //!< Controls whether lists have a size attribute
   }; // XMLOutputArchive
 
   // ######################################################################
@@ -776,7 +789,10 @@ namespace cereal
   template <class T> inline
   void prologue( XMLOutputArchive & ar, SizeTag<T> const & )
   {
-    ar.appendAttribute( "size", "dynamic" );
+      if (ar.hasSizeAttributes())
+      {
+          ar.appendAttribute("size", "dynamic");
+      }
   }
 
   template <class T> inline
