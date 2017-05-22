@@ -129,7 +129,7 @@ public:
         bool empty = Base::level_stack_.template Pop<typename Base::Level>(1)->valueCount == 0;
 
         if (!empty) {
-            Base::os_->Put('\n');
+            // Base::os_->Put('\n');
             WriteIndent();
         }
         bool ret = Base::WriteEndObject();
@@ -153,7 +153,7 @@ public:
         bool empty = Base::level_stack_.template Pop<typename Base::Level>(1)->valueCount == 0;
 
         if (!empty && !(formatOptions_ & kFormatSingleLineArray)) {
-            Base::os_->Put('\n');
+            // Base::os_->Put('\n');
             WriteIndent();
         }
         bool ret = Base::WriteEndArray();
@@ -200,7 +200,7 @@ protected:
                 }
 
                 if (!(formatOptions_ & kFormatSingleLineArray)) {
-                    Base::os_->Put('\n');
+                    // Base::os_->Put('\n');
                     WriteIndent();
                 }
             }
@@ -208,15 +208,16 @@ protected:
                 if (level->valueCount > 0) {
                     if (level->valueCount % 2 == 0) {
                         Base::os_->Put(',');
-                        Base::os_->Put('\n');
+                        // Base::os_->Put('\n');
                     }
                     else {
                         Base::os_->Put(':');
                         Base::os_->Put(' ');
                     }
                 }
-                else
-                    Base::os_->Put('\n');
+                else {
+                    // Base::os_->Put('\n');
+                }
 
                 if (level->valueCount % 2 == 0)
                     WriteIndent();
